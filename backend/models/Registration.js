@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+import mongoose from 'mongoose';
+const { Schema } = mongoose;
 
 const RegistrationSchema = new Schema({
     user: {
@@ -12,4 +12,4 @@ const RegistrationSchema = new Schema({
     }
 });
 
-module.exports = mongoose.model('Registration', RegistrationSchema);
+export default mongoose.model('Registration', RegistrationSchema);

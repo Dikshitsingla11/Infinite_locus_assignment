@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import io from "socket.io-client";
 
@@ -6,6 +6,7 @@ const Dashboard = () => {
   const [events, setEvents] = useState([]);
   const [user, setUser] = useState(null);
   const [registrations, setRegistrations] = useState({});
+  const socketRef = useRef(null);
 
   useEffect(() => {
     const currentUser = JSON.parse(localStorage.getItem("user"));
@@ -13,7 +14,16 @@ const Dashboard = () => {
       setUser(currentUser);
     }
     fetchEvents();
-    connect();
+
+    socketRef.current = io("http://localhost:3000");
+
+    socketRef.current.on("registrations", (data) => {
+      setRegistrations((prev) => ({ ...prev, [data.eventId]: data.count }));
+    });
+
+    return () => {
+      socketRef.current.disconnect();
+    };
   }, []);
 
   const fetchEvents = async () => {
@@ -25,13 +35,6 @@ const Dashboard = () => {
     } catch (error) {
       console.error("Failed to fetch events", error);
     }
-  };
-
-  const connect = () => {
-    const socket = io("http://localhost:5000");
-    socket.on("registrations", (data) => {
-      setRegistrations((prev) => ({ ...prev, [data.eventId]: data.count }));
-    });
   };
 
   const handleCreateEvent = async (event) => {
@@ -89,11 +92,11 @@ const Dashboard = () => {
       <h3>Events</h3>
       <ul>
         {events.map((event) => (
-          <li key={event.id}>
+          <li key={event._id}>
             {event.name} - {event.description} - {event.date} - {event.location}
-            (Registrations: {registrations[event.id] || 0})
+            (Registrations: {registrations[event._id] || 0})
             {user && user.role === "USER" && (
-              <button onClick={() => handleRegister(event.id)}>Register</button>
+              <button onClick={() => handleRegister(event._id)}>Register</button>
             )}
           </li>
         ))}

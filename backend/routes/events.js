@@ -1,9 +1,9 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const auth = require('../middleware/auth');
-const Event = require('../models/Event');
-const Registration = require('../models/Registration');
-const User = require('../models/User');
+import auth from '../middleware/auth.js';
+import Event from '../models/Event.js';
+import Registration from '../models/Registration.js';
+import User from '../models/User.js';
 
 router.get('/', auth, async (req, res) => {
     try {
@@ -57,4 +57,4 @@ router.post('/:id/register', auth, async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

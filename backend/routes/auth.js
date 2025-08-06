@@ -1,12 +1,13 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import User from '../models/User.js';
 
 router.post('/signup', async (req, res) => {
     try {
         const { username, password, role } = req.body;
+        console.log(username);
         let user = await User.findOne({ username });
         if (user) {
             return res.status(400).json({ msg: 'User already exists' });
@@ -58,4 +59,4 @@ router.post('/signin', async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;
